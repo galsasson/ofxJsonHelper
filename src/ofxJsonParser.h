@@ -17,7 +17,9 @@ class ofxJsonParser
 public:
 
 	static bool parseBool(const Json::Value& val, bool def=false);
+	static int parseInt(const Json::Value& val, int def=0);
 	static float parseFloat(const Json::Value& val, float def=0);
+	static double parseDouble(const Json::Value& val, double def=0);
 	static ofColor parseColor(const Json::Value& val);
 	static ofVec4f parseVector(const Json::Value& val, const ofVec4f& def=ofVec4f());
 	static ofRectangle parseRect(const Json::Value& val);

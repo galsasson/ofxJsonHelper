@@ -10,18 +10,34 @@
 
 bool ofxJsonParser::parseBool(const Json::Value& val, bool def)
 {
-	if (val == Json::nullValue) {
+	if (val == Json::nullValue || !val.isBool()) {
 		return def;
 	}
 	return val.asBool();
 }
 
+int ofxJsonParser::parseInt(const Json::Value& val, int def)
+{
+	if (val == Json::nullValue || !val.isInt()) {
+		return def;
+	}
+	return val.asInt();
+}
+
 float ofxJsonParser::parseFloat(const Json::Value& val, float def)
 {
-	if (val == Json::nullValue) {
+	if (val == Json::nullValue || !val.isDouble()) {
 		return def;
 	}
 	return val.asFloat();
+}
+
+double ofxJsonParser::parseDouble(const Json::Value& val, double def)
+{
+	if (val == Json::nullValue || !val.isDouble()) {
+		return def;
+	}
+	return val.asDouble();
 }
 
 ofColor ofxJsonParser::parseColor(const Json::Value& val)
