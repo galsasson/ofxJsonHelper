@@ -8,6 +8,14 @@
 
 #include "ofxJsonParser.h"
 
+string ofxJsonParser::parseString(const Json::Value& val, string def)
+{
+	if (val == Json::nullValue || !val.isString()) {
+		return def;
+	}
+	return val.asString();
+}
+
 bool ofxJsonParser::parseBool(const Json::Value& val, bool def)
 {
 	if (val == Json::nullValue || !val.isBool()) {

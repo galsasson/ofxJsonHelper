@@ -15,7 +15,7 @@
 class ofxJsonParser
 {
 public:
-
+	static string parseString(const Json::Value& val, string def="");
 	static bool parseBool(const Json::Value& val, bool def=false);
 	static int parseInt(const Json::Value& val, int def=0);
 	static float parseFloat(const Json::Value& val, float def=0);
