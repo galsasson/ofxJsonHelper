@@ -48,7 +48,7 @@ double ofxJsonParser::parseDouble(const Json::Value& val, double def)
 	return val.asDouble();
 }
 
-ofColor ofxJsonParser::parseColor(const Json::Value& val)
+ofColor ofxJsonParser::parseColor(const Json::Value& val, const ofColor& def)
 {
 	if (val.isArray()) {
 		if (val.size() == 1) {
@@ -60,7 +60,7 @@ ofColor ofxJsonParser::parseColor(const Json::Value& val)
 	else if (val.isObject()) {
 		if (!val.isMember("r") || !val.isMember("g") || !val.isMember("b")) {
 			ofLogWarning("ofxJsonParser") << "cannot parse color: "<<val.toStyledString();
-			return ofColor(0);
+			return def;
 		}
 		else {
 			float alpha = val.isMember("a")?val["a"].asInt():255;
@@ -72,6 +72,7 @@ ofColor ofxJsonParser::parseColor(const Json::Value& val)
 		vector<string> parts = ofSplitString(colStr, " ");
 		if (parts.empty()) {
 			ofLogWarning("ofxJsonParser") << "Failed to parse color string (format: #RRGGBB A%). Got: '"<<colStr<<"'";
+			return def;
 		}
 		int val = parts[0][0]=='#'?ofHexToInt(parts[0].substr(1, parts[0].size()-1)):ofHexToInt(parts[0]);
 		float alpha = parts.size()==2?parts[1][parts[1].size()-1]=='%'?ofToFloat(parts[1].substr(0, parts[1].size()-1)):ofToFloat(parts[1]):100;
@@ -79,7 +80,7 @@ ofColor ofxJsonParser::parseColor(const Json::Value& val)
 	}
 	else {
 		ofLogWarning("JsonParser") << "cannot parse color: "<<val.toStyledString();
-		return ofColor(0);
+		return def;
 	}
 }
 
