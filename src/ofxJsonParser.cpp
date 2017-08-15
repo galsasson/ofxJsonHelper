@@ -144,14 +144,37 @@ string ofxJsonParser::toString(const ofColor& color)
 
 void ofxJsonParser::objectMerge(Json::Value& dst, const Json::Value& src)
 {
-	if (!dst.isObject() || !src.isObject()) {
+	if (!src.isObject()) {
+		ofLogError("ofxJsonParser") << "src is not an object";
+		return;
+	}
+
+	if (!dst.isObject()) {
+		ofLogError("ofxJsonParser") << "dst is not an object";
+		return;
+	}
+
+	for (const string& key: src.getMemberNames()) {
+		dst[key] = src[key];
+	}
+}
+
+void ofxJsonParser::overrideOnlyMerge(Json::Value& dst, const Json::Value& src)
+{
+	if (!src.isObject()) {
+		ofLogError("ofxJsonParser") << "src is not an object";
+		return;
+	}
+
+	if (!dst.isObject()) {
+		ofLogError("ofxJsonParser") << "dst is not an object";
 		return;
 	}
 
 	for (const string& key: dst.getMemberNames()) {
 		if (src.isMember(key)) {
 			if (dst[key].isObject() && src[key].isObject()) {
-				objectMerge(dst[key], src[key]);
+				overrideOnlyMerge(dst[key], src[key]);
 			}
 			else {
 				dst[key] = src[key];
@@ -159,3 +182,4 @@ void ofxJsonParser::objectMerge(Json::Value& dst, const Json::Value& src)
 		}
 	}
 }
+

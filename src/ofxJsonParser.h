@@ -25,5 +25,6 @@ public:
 	static ofRectangle parseRect(const Json::Value& val);
 	static string toString(const ofColor& color);
 	static void objectMerge(Json::Value& dst, const Json::Value& src);
+	static void overrideOnlyMerge(Json::Value& dst, const Json::Value& src);
 };
 #endif /* ofxJsonParser_h */
