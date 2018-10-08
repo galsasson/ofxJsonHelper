@@ -50,6 +50,10 @@ double ofxJsonParser::parseDouble(const Json::Value& val, double def)
 
 ofColor ofxJsonParser::parseColor(const Json::Value& val, const ofColor& def)
 {
+	if (val == Json::nullValue) {
+		return def;
+	}
+
 	if (val.isArray()) {
 		if (val.size() == 1) {
 			return ofFloatColor(val[0].asFloat(), val[0].asFloat(), val[0].asFloat(), 1);
@@ -77,10 +81,6 @@ ofColor ofxJsonParser::parseColor(const Json::Value& val, const ofColor& def)
 		int val = parts[0][0]=='#'?ofHexToInt(parts[0].substr(1, parts[0].size()-1)):ofHexToInt(parts[0]);
 		float alpha = parts.size()==2?parts[1][parts[1].size()-1]=='%'?ofToFloat(parts[1].substr(0, parts[1].size()-1)):ofToFloat(parts[1]):100;
 		return ofColor::fromHex(val, alpha*2.55);
-	}
-	else {
-		ofLogWarning("JsonParser") << "cannot parse color: "<<val.toStyledString();
-		return def;
 	}
 }
 
