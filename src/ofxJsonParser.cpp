@@ -56,10 +56,21 @@ ofColor ofxJsonParser::parseColor(const Json::Value& val, const ofColor& def)
 
 	if (val.isArray()) {
 		if (val.size() == 1) {
-			return ofFloatColor(val[0].asFloat(), val[0].asFloat(), val[0].asFloat(), 1);
+			if (val[0].isDouble()) {
+				return ofFloatColor(val[0].asFloat(), val[0].asFloat(), val[0].asFloat(), 1);
+			}
+			else {
+				return ofColor(val[0].asInt(), val[0].asInt(), val[0].asInt(), 255);
+			}
 		}
-		float alpha = val.size()==4?val[3].asFloat():1;
-		return ofFloatColor(val[0].asFloat(), val[1].asFloat(), val[2].asFloat(), alpha);
+		if (val[0].isDouble()) {
+			float alpha = val.size() == 4 ? val[3].asFloat() : 1;
+			return ofFloatColor(val[0].asFloat(), val[1].asFloat(), val[2].asFloat(), alpha);
+		}
+		else {
+			float alpha = val.size() == 4 ? val[3].asInt() : 255;
+			return ofColor(val[0].asInt(), val[1].asInt(), val[2].asInt(), alpha);
+		}
 	}
 	else if (val.isObject()) {
 		if (!val.isMember("r") || !val.isMember("g") || !val.isMember("b")) {
@@ -80,6 +91,42 @@ ofColor ofxJsonParser::parseColor(const Json::Value& val, const ofColor& def)
 		}
 		int val = parts[0][0]=='#'?ofHexToInt(parts[0].substr(1, parts[0].size()-1)):ofHexToInt(parts[0]);
 		float alpha = parts.size()==2?parts[1][parts[1].size()-1]=='%'?ofToFloat(parts[1].substr(0, parts[1].size()-1)):ofToFloat(parts[1]):100;
+		return ofColor::fromHex(val, alpha*2.55);
+	}
+}
+
+ofColor ofxJsonParser::parseColorInt(const Json::Value& val, const ofColor& def)
+{
+	if (val == Json::nullValue) {
+		return def;
+	}
+
+	if (val.isArray()) {
+		if (val.size() == 1) {
+			return ofColor(val[0].asInt(), val[0].asInt(), val[0].asInt(), 255);
+		}
+		int alpha = val.size() == 4 ? val[3].asInt() : 255;
+		return ofColor(val[0].asInt(), val[1].asInt(), val[2].asInt(), alpha);
+	}
+	else if (val.isObject()) {
+		if (!val.isMember("r") || !val.isMember("g") || !val.isMember("b")) {
+			ofLogWarning("ofxJsonParser") << "cannot parse color: " << val.toStyledString();
+			return def;
+		}
+		else {
+			int alpha = val.isMember("a") ? val["a"].asInt() : 255;
+			return ofColor(val["r"].asInt(), val["g"].asInt(), val["b"].asInt(), alpha);
+		}
+	}
+	else if (val.isString()) {
+		string colStr = val.asString();
+		vector<string> parts = ofSplitString(colStr, " ");
+		if (parts.empty()) {
+			ofLogWarning("ofxJsonParser") << "Failed to parse color string (format: #RRGGBB A%). Got: '" << colStr << "'";
+			return def;
+		}
+		int val = parts[0][0] == '#' ? ofHexToInt(parts[0].substr(1, parts[0].size() - 1)) : ofHexToInt(parts[0]);
+		float alpha = parts.size() == 2 ? parts[1][parts[1].size() - 1] == '%' ? ofToFloat(parts[1].substr(0, parts[1].size() - 1)) : ofToFloat(parts[1]) : 100;
 		return ofColor::fromHex(val, alpha*2.55);
 	}
 }
